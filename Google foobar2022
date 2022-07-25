@@ -1,0 +1,601 @@
+public class Solution {
+ public static int solution(String s) {
+    // Function calls are expensive, so to avoid calling length() multiple times
+    int howLong = s.length();
+    int count = 0;
+
+    // Iterating through length of the input string from backwards
+    for (int i = howLong; i > 0; i--) {
+        int n = howLong / i;
+        boolean flag = true;
+        // Storing substring
+        String subString = s.substring(0, n);
+
+        // Check for substring repeated no. of times
+        for (int j = 1; j < i; j++) {
+            if (!s.substring(j * n, j * n + n).equals(subString)) {
+                flag = false;
+                break;
+            }
+        }
+        if (flag) {
+            count = i;
+            break;
+        }
+    }
+    return count;
+  }
+}
+
+
+-------------------------------------
+
+
+/// Source : Google FooBar
+/// Author : Aman shah
+/// Time   : 2020-05-22
+
+import java.util.Arrays;
+import java.util.HashSet;
+
+
+/// Using HashSet
+/// Time Complexity: O(|res| * |s|)
+/// Space Complexity: O(|res| * |s|)
+public class Solution {
+
+    public static int solution(String n, int b) {
+
+        int k = n.length();
+
+        HashSet<String> hashset = new HashSet<>();
+        while(!hashset.contains(n)){
+            hashset.add(n);
+            n = next(n, k, b);
+//            System.out.println(n);
+        }
+
+        return cycleLength(n, k, b);
+    }
+
+    private static int cycleLength(String n, int k, int b){
+
+        HashSet<String> hashset = new HashSet<>();
+        int res = 0;
+        while(!hashset.contains(n)){
+            hashset.add(n);
+            n = next(n, k, b);
+            res ++;
+        }
+        return res;
+    }
+
+    private static String next(String n, int k, int b){
+
+        char[] charn1 = n.toCharArray();
+        char[] charn2 = n.toCharArray();
+
+        Arrays.sort(charn1);
+        for(int i = 0; i < charn1.length / 2; i ++){
+            char t = charn1[i];
+            charn1[i] = charn1[charn1.length - 1 - i];
+            charn1[charn1.length - 1 - i] = t;
+        }
+        String n1 = String.copyValueOf(charn1);
+//        System.out.println(n1);
+
+        Arrays.sort(charn2);
+        String n2 = String.copyValueOf(charn2);
+//        System.out.println(n2);
+
+        int res = Integer.parseInt(n1, b) - Integer.parseInt(n2, b);
+        String ret = Integer.toString(res, b);
+
+        StringBuilder zero = new StringBuilder();
+        for(int i = 0; i < k - ret.length(); i ++) zero.append('0');
+        return zero.toString() + ret;
+    }
+
+    public static void main(String[] args){
+
+        System.out.println(Solution.solution("210022", 3));
+        // 3
+
+        System.out.println(Solution.solution("1211", 10));
+        // 1
+    }
+
+}
+
+-------------------------------------------------
+from fractions import Fraction  
+def answer(pegs):
+    arrLength = len(pegs)
+    if ((not pegs) or arrLength == 1):
+        return [-1,-1]
+
+    even = True if (arrLength % 2 == 0) else False
+    sum = (- pegs[0] + pegs[arrLength - 1]) if even else (- pegs[0] - pegs[arrLength -1])
+
+    if (arrLength > 2):
+        for index in xrange(1, arrLength-1):
+            sum += 2 * (-1)**(index+1) * pegs[index]
+
+    FirstGearRadius = Fraction(2 * (float(sum)/3 if even else sum)).limit_denominator()
+
+    # now that we have the radius of the first gear, we should again check the input array of pegs to verify that
+    # the pegs radius' is atleast 1.
+    # since for valid results, LastGearRadius >= 1 and FirstGearRadius = 2 * LastGearRadius
+    # thus for valid results FirstGearRadius >= 2
+
+    if FirstGearRadius < 2:
+        return [-1,-1]
+
+    currentRadius = FirstGearRadius
+    for index in xrange(0, arrLength-2):
+        CenterDistance = pegs[index+1] - pegs[index]
+        NextRadius = CenterDistance - currentRadius
+        if (currentRadius < 1 or NextRadius < 1):
+            return [-1,-1]
+        else:
+            currentRadius = NextRadius
+
+    return [FirstGearRadius.numerator, FirstGearRadius.denominator]
+
+
+------------------------------------------------------
+https://foobar.withgoogle.com/?eid=WcOTk
+https://foobar.withgoogle.com/?eid=WcOTk
+----------------------------------------------------
+def solution(l):
+    c = [0] * len(l)
+    count = 0
+    for i in range(0,len(l)):
+        for j in range(0, i):
+            if l[i] % l[j] == 0:
+                c[i] = c[i] + 1
+                count = count + c[j]
+    return count
+-----------------------------------------------
+
+def solution(x, y):
+    M, F = max(int(x), int(y)), min(int(x), int(y))
+    res = 0
+    while F > 0:
+        res += M // F
+        M, F = F, M % F
+    if M != 1:
+        return "impossible"
+    return str(res - 1)
+-----------------------------------------------------
+/// Source : Google FooBar
+/// Author : Aman shah
+/// Time   : 2022-07-24
+
+import java.math.BigInteger;
+
+
+/// Greedy
+/// Time Complexity: O(logx)
+/// Space Complexioty: O(logx)
+public class Solution {
+
+    public static int solution(String x) {
+
+        BigInteger n = new BigInteger(x);
+        int res = 0;
+        while(!n.equals(BigInteger.ONE)){
+            int p = n.getLowestSetBit();
+            if(p != 0){
+                res += p;
+                n = n.shiftRight(p);
+            }
+            else{
+                if(n.equals(BigInteger.valueOf(3)) ||
+                   n.remainder(BigInteger.valueOf(4)).equals(BigInteger.ONE)){
+                    n = n.subtract(BigInteger.ONE);
+                    res ++;
+                }
+                else{
+                    n = n.add(BigInteger.ONE);
+                    res ++;
+                }
+            }
+        }
+        return res;
+    }
+
+    public static void main(String[] args){
+
+        System.out.println(Solution.solution("15"));
+        // 5
+
+        System.out.println(Solution.solution("4"));
+        // 2
+
+        System.out.println(Solution.solution("3"));
+        // 2
+    }
+}
+-----------------------------------------------------------
+bunnies running
+from copy import deepcopy
+from itertools import permutations
+
+# I am not happy with this implementation, due to a realization I have recently had:
+#   My Bellman-Ford implementation is completely unnecessary. The Floyd algorithm can detect negative cycles, and
+#   negative cycles are all I used Bellman-Ford for. Thus, with some refactoring, I could easily make this more
+#   efficient.
+
+
+def powerset(list):
+    """
+    :param list: The list to generate subsets of.
+    :return: A generator that produces all subsets of this set.
+    """
+    x = len(list)
+    masks = [1 << i for i in range(x)]
+    for i in range(1 << x):
+        yield [ss for mask, ss in zip(masks, list) if i & mask]
+
+
+def getneighbourindex(neighbour, graphsize):
+    if neighbour == "Bulkhead":
+        return graphsize - 1
+    elif neighbour == "Start":
+        return 0
+    else:
+        return int(neighbour)+1
+
+
+def matrix2graph(matrix):
+    """
+    This helper function turns our matrix into a graph that's a little easier to work with using Bellman-Ford.
+
+    :param matrix: The original matrix.
+    :return: matrix in dictionary format.
+    """
+    keys = ["Start"]
+    for num in range(1, len(matrix)-1):
+        keys.append(num-1)
+    keys.append("Bulkhead")
+    graph = dict(zip(keys, matrix))
+    return graph
+
+
+# Step 1: Initialize graph
+def initialize(graph, source):
+    """
+    Step 1 of the Bellman-Ford algorithm.
+    """
+    distance = {}
+    predecessor = {}
+    for node in graph:
+        # We start off assuming all nodes are too far away!
+        distance[node] = 1000
+        predecessor[node] = None
+    distance[source] = 0  # For the source we know how to reach
+    return distance, predecessor
+
+
+def relax(node, neighbour, graph, distance, predecessor):
+    nidx = getneighbourindex(neighbour, len(graph))
+    if distance[node] + graph[node][nidx] < distance[neighbour]:
+        distance[neighbour] = distance[node] + graph[node][nidx]
+        predecessor[neighbour] = node
+
+
+def bellman_ford(matrix, graph, time_limit, source):
+    dist, pred = initialize(graph, source)
+    for num in range(len(graph)-1):
+        for node in graph:
+            temp = dict(graph)
+            del temp[node]
+            for neighbour in temp:
+                # Step 2: Relax edges repeatedly
+                relax(node, neighbour, graph, dist, pred)
+
+    # Step 3: Check for negative-weight cycles
+    for node in graph:
+        for neighbour in graph:
+            nidx = getneighbourindex(neighbour, len(graph))
+            if dist[node] + graph[node][nidx] < dist[neighbour]:
+                # We found a negative cycle. Since the door is open forever, free all the bunnies!~
+                return [num for num in range(0, len(graph)-2)]
+
+    # If we reach this point, it's time to employ floyd and also enumerate path lengths.
+    spaths = floyd(matrix)
+    # Uncomment the below code to see the floyd algorithm printed in a nice format.
+    # for i in range(len(spaths)):
+    #     print(spaths[i])
+    return find_most_bunnies(matrix, spaths, time_limit)
+
+
+def floyd(matrix):
+    """
+    Floyd's algorithm, straight from a textbook. Floyd's algorithm transforms a weight matrix
+    into a matrix of shortest paths, such that the shortest path from node M to node N is
+    equal to matrix[m][n]
+
+    :return: An array of shortest-path distance calculations.
+    """
+    n = len(matrix)
+    spaths = deepcopy(matrix)
+    for k in range(n):
+        for i in range(n):
+            for j in range(n):
+                if spaths[i][k] + spaths[k][j] < spaths[i][j]:
+                    spaths[i][j] = spaths[i][k] + spaths[k][j]
+    return spaths
+
+
+def find_most_bunnies(matrix, spaths, time_limit):
+    """
+    And now, yet more inefficient bruteforcing to solve our NP-Hard problem. Enumerate all possible subsets,
+    and then evaluate all their permutations to find the most efficient path.
+
+    :param matrix: The original weighted matrix we will analyze with our algorithm.
+    :param spaths: An array of shortest paths generated by the floyd's algorithm.
+    :param time_limit: The time limit each subset is tested against.
+    :return: The lexicographically least subset of bunnies that can escape.
+    """
+    n = len(matrix)-2
+    bunnyids = []
+    for num in range(n):
+        bunnyids.append(num)
+    pset = powerset(bunnyids)
+    pset = sorted(pset)
+    # Now that I've got all our possible subsets, I can calculate the distance of each path and determine which is
+    # optimal.
+    optimal_bunnies = []
+    for sub in pset:
+        for permutation in permutations(sub):
+            # print(permutation)
+            subsum = 0
+            prev = 0
+            next = len(matrix)-1
+            for bunnyid in permutation:
+                next = bunnyid+1
+                subsum += spaths[prev][next]
+                prev = next
+            subsum += spaths[prev][len(matrix)-1]
+            if subsum <= time_limit and len(sub) > len(optimal_bunnies):
+                optimal_bunnies = sub
+                if len(optimal_bunnies) == n:
+                    break
+            else:
+                # Either rescue takes too long, or lexicographically lesser solution of same length exists.
+                pass
+    return optimal_bunnies
+
+
+def solution(times, time_limit):
+    # I was told when I got my degree I would never be asked to solve the Traveling Salesman Problem.
+    # I was misinformed, but this was fun!
+    if len(times) <= 2:
+        return []
+    graph = matrix2graph(times)
+    return bellman_ford(times, graph, time_limit, "Start")
+
+
+if __name__ == '__main__':
+    case1 = [[0, 1, 1, 1, 1],
+             [1, 0, 1, 1, 1],
+             [1, 1, 0, 1, 1],
+             [1, 1, 1, 0, 1],
+             [1, 1, 1, 1, 0]]
+    print("\n\nCase 1: Provided test case 1.\nTime limit: 3")
+    for row in case1:
+        print('', row)
+    print("\n  Expected: [0, 1]\nCalculated:", str(answer(case1, 3)))
+
+    print("\n\nCase 2: Provided test case 2.\nTime limit: 1")
+    case2 = [[0, 2, 2, 2, -1],
+             [9, 0, 2, 2, -1],
+             [9, 3, 0, 2, -1],
+             [9, 3, 2, 0, -1],
+             [9, 3, 2, 2, 0]]
+    for row in case2:
+        print('', row)
+    print("\n  Expected: [1, 2]\nCalculated:", str(answer(case2, 1)))
+
+    print("\n\nCase 3: Infinite negative cycle.\nTime limit: -500")
+    case3 = [[0, 2, 2, 2, -1],
+             [9, 0, 2, 2, 0],
+             [9, 3, 0, 2, 0],
+             [9, 3, 2, 0, 0],
+             [-1, 3, 2, 2, 0]]
+    for row in case3:
+        print('', row)
+    print("\n  Expected: [0, 1, 2]\nCalculated:", str(answer(case3, -500)))
+
+    print("\n\nCase 4: Max bunnies. None rescuable.\nTime limit: 1")
+    case4 = [[1, 1, 1, 1, 1, 1, 1],
+             [1, 1, 1, 1, 1, 1, 1],
+             [1, 1, 1, 1, 1, 1, 1],
+             [1, 1, 1, 1, 1, 1, 1],
+             [1, 1, 1, 1, 1, 1, 1],
+             [1, 1, 1, 1, 1, 1, 1],
+             [1, 1, 1, 1, 1, 1, 1]]
+    for row in case4:
+        print('', row)
+    print("\n  Expected: []\nCalculated:", str(answer(case4, 1)))
+
+    print("\n\nCase 5: One bunny.\nTime limit: 2")
+    case5 = [[1, 1, 1],
+             [1, 1, 1],
+             [1, 1, 1]]
+    for row in case5:
+        print('', row)
+    print("\n  Expected: [0]\nCalculated:", str(answer(case5, 2)))
+
+    print("\n\nCase 6: Multiple revisits.\nTime limit: 10")
+    case6 = [[0, 5, 11, 11, 1],
+             [10, 0, 1, 5, 1],
+             [10, 1, 0, 4, 0],
+             [10, 1, 5, 0, 1],
+             [10, 10, 10, 10, 0]]
+    for row in case6:
+        print('', row)
+    print("\n  Expected: [0, 1]\nCalculated:", str(answer(case6, 10)))
+
+    print("\n\nCase 7: Multiple Revisits 2.\nTime limit: 5")
+    case7 = [[0, 10, 10, 10, 1],
+             [0, 0, 10, 10, 10],
+             [0, 10, 0, 10, 10],
+             [0, 10, 10, 0, 10],
+             [1, 1, 1, 1, 0]]
+    for row in case7:
+        print('', row)
+    print("\n  Expected: [0, 1]\nCalculated:", str(answer(case7, 5)))
+
+    print("\n\nCase 8: Time travel.\nTime limit: 1")
+    case8 = [[0, 0, 0, 0, 0],
+             [0, 0, 0, 0, 0],
+             [0, 0, 0, 0, 0],
+             [0, 0, 0, 0, 0],
+             [0, 0, 0, 0, 0]]
+    for row in case8:
+        print('', row)
+    print("\n  Expected: [0, 1, 2]\nCalculated:", str(answer(case8, 1)))
+
+    print("\n\nCase 9: No bunnies.\nTime limit: 1")
+    case9 = [[2, 2],
+             [2, 2]]
+    for row in case9:
+        print('', row)
+    print("\n  Expected: []\nCalculated:", str(answer(case9, 1)))
+
+    print("\n\nCase 10: Backwards bunny path.\nTime limit: 6")
+    case10 = [[0, 10, 10, 1, 10],
+              [10, 0, 10, 10, 1],
+              [10, 1, 0, 10, 10],
+              [10, 10, 1, 0, 10],
+              [1, 10, 10, 10, 0]]
+    for row in case10:
+        print('', row)
+    print("\n  Expected: [0, 1, 2]\nCalculated:", str(answer(case10, 6)))
+
+--------------------------------------------------------------------
+from math import sqrt
+from numpy import zeros
+
+
+def computeDist(p1, p2):
+    return sqrt((p1[0] - p2[0])**2 + (p1[1] - p2[1])**2)
+
+
+def computeGCD(x, y):
+    while(y):
+        x, y = y, x % y
+    return abs(x)
+
+
+def get_entity_position_from_room_number(entity, room_number, dimensions):
+    r_x, r_y = room_number
+    e_x, e_y = entity
+    dim_x, dim_y = dimensions
+
+    res_x = dim_x*r_x + e_x if r_x % 2 == 0 else dim_x*r_x + (dim_x - e_x)
+    res_y = dim_y*r_y + e_y if r_y % 2 == 0 else dim_y*r_y + (dim_y - e_y)
+
+    return (res_x, res_y)
+
+
+def solution(dimensions, your_position, trainer_position, distance):
+
+    dim_x, dim_y = dimensions
+    m_x, m_y = your_position
+
+    num_rooms_above_x_axis = (distance + m_y)//dim_y + 1
+    num_rooms_below_x_axis = (distance - m_y)//dim_y + 1
+    num_rooms_left_of_y_axis = (distance - m_x)//dim_x + 1
+    num_rooms_right_of_y_axis = (distance + m_x)//dim_x + 1
+
+    w = (num_rooms_right_of_y_axis + num_rooms_left_of_y_axis)*dim_x + 1
+    h = (num_rooms_above_x_axis + num_rooms_below_x_axis)*dim_y + 1
+
+    x_offset = num_rooms_left_of_y_axis*dim_x
+    y_offset = num_rooms_below_x_axis*dim_y
+
+    matrix = zeros(shape=(w, h))
+    for i in range(-1*num_rooms_left_of_y_axis, num_rooms_right_of_y_axis):
+        for j in range(-1*num_rooms_below_x_axis, num_rooms_above_x_axis):
+            tv_x, tv_y = get_entity_position_from_room_number(
+                trainer_position, [i, j], dimensions)
+
+            mv_x, mv_y = get_entity_position_from_room_number(
+                your_position, [i, j], dimensions)
+
+            matrix[tv_x+x_offset][tv_y+y_offset] = 1
+            matrix[mv_x+x_offset][mv_y+y_offset] = 2
+
+    hits = 0
+    shots_taken = set()
+    for i in range(-1*num_rooms_left_of_y_axis, num_rooms_right_of_y_axis):
+        for j in range(-1*num_rooms_below_x_axis, num_rooms_above_x_axis):
+            t_x, t_y = get_entity_position_from_room_number(
+                trainer_position, [i, j], dimensions)
+            if distance < computeDist([t_x, t_y], your_position):
+                continue
+            delta_y = t_y - m_y
+            delta_x = t_x - m_x
+            d = computeGCD(delta_y, delta_x)
+            delta_y = int(delta_y/d)
+            delta_x = int(delta_x/d)
+            if (delta_y, delta_x) in shots_taken:
+                continue
+            shots_taken.add((delta_y, delta_x))
+            ray_x, ray_y = m_x + x_offset, m_y + y_offset
+            while True:
+                ray_x += delta_x
+                ray_y += delta_y
+                entity = matrix[ray_x][ray_y]
+                if entity == 1:
+                    hits += 1
+                    break
+                elif entity == 2:
+                    break
+    return hits
+
+
+if __name__ == "__main__":
+    print(solution([3, 2], [1, 1], [2, 1], 4))
+    print(solution([300, 275], [150, 150], [185, 100], 500))
+--------------------------------------------------------------------
+Disoraly Escape
+#python3 code
+
+from math import factorial
+from collections import Counter
+from fractions import gcd
+
+def cycle_count(c, n):
+    cc=factorial(n)
+    for a, b in Counter(c).items():
+        cc//=(a**b)*factorial(b)
+    return cc        
+
+def cycle_partitions(n, i=1):
+    yield [n]
+    for i in range(i, n//2 + 1):
+        for p in cycle_partitions(n-i, i):
+            yield [i] + p
+
+def solution(w, h, s):
+    # Your code here    
+    grid=0
+    for cpw in cycle_partitions(w):
+        for cph in cycle_partitions(h):            
+            m=cycle_count(cpw, w)*cycle_count(cph, h)
+            grid+=m*(s**sum([sum([gcd(i, j) for i in cpw]) for j in cph]))
+              
+    return str(grid//(factorial(w)*factorial(h)))
+--------------------------------------
+
+
+
+
+
+
+
